@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ITS Food Exploler</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="top">
+    <div class="wrap bar">
+      <a class="brand" href="#beranda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v5a3 3 0 0 0 6 0V3M6 3v18M17 21V3c-3 2-4 5-4 9h4"/></svg> ITS Food Exploler</a>
+      <nav aria-label="Navigasi utama">
+        <a href="#beranda">Beranda</a><a href="#jelajahi">Jelajahi</a><a href="#peta">Peta</a><button type="button" class="home-about" popovertarget="about-home">Tentang</button>
+      </nav>
+      <div class="header-actions">
+        <button class="header-search" type="button" aria-label="Cari tempat makan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg></button>
+        <button class="header-account" type="button" disabled title="Fitur belum tersedia">Masuk</button>
+        <button class="header-account primary" type="button" disabled title="Fitur belum tersedia">Daftar</button>
+      </div>
+      <div id="about-home" popover><strong>ITS Food Exploler</strong><p>Pratinjau pencarian kuliner di sekitar ITS dengan data ilustratif.</p></div>
+    </div>
+  </header>
+  <main class="wrap">
+    <section id="beranda" class="page">
+      <div class="home-hero">
+        <svg class="campus-art" viewBox="1024 84 648 517" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+          <image href="UI/1.png" width="1672" height="941"/>
+        </svg>
+        <div class="home-wrap hero-content">
+          <span class="pill">Jelajahi Kuliner Sekitar ITS</span>
+          <h1>Cari Tempat Makan<br class="desktop-break"> Favoritmu di <em>Sekitar ITS</em></h1>
+          <p>Temukan rekomendasi tempat makan sesuai selera, lokasi, dan budget.<br class="desktop-break"> Semua informasi kuliner favorit mahasiswa ITS dalam satu platform.</p>
+          <form id="home-search" class="home-search">
+            <label class="sr-only" for="home-query">Cari tempat atau menu</label>
+            <span class="search-symbol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg></span>
+            <input id="home-query" name="q" type="search" placeholder="Mau makan apa hari ini? (contoh: nasi goreng)">
+            <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg> Cari</button>
+          </form>
+          <div id="categories" class="home-categories" aria-label="Jelajahi kategori"></div>
+        </div>
+      </div>
+      <div class="home-wrap recommendations">
+        <div class="recommendations-heading">
+          <div><h2>Rekomendasi Untuk Kamu</h2><p>Jelajahi pilihan tempat makan di sekitar kampus. <span>Data ilustratif</span></p></div>
+          <a href="#jelajahi" id="home-all">Lihat Semua <span aria-hidden="true">→</span></a>
+        </div>
+        <div id="recommendations" class="cards"></div>
+      </div>
+    </section>
+    <section id="jelajahi" class="page" hidden>
+      <form id="filters" class="explore-sidebar" aria-label="Filter pencarian">
+        <div class="filter-heading"><h2>Filter Pencarian</h2><button type="reset" class="filter-reset">↻ Reset</button></div>
+        <input name="category" type="hidden">
+        <div id="filter-groups"></div>
+      </form>
+      <div class="explore-content">
+        <div class="explore-hero">
+          <svg class="explore-campus" viewBox="1080 69 576 112" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+            <image href="UI/2.png" width="1672" height="941"/>
+          </svg>
+          <h1>Jelajahi Kuliner</h1>
+          <p>Temukan tempat makan sesuai selera, lokasi, dan kebutuhanmu.</p>
+          <div class="explore-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>
+            <label class="sr-only" for="explore-query">Cari tempat atau menu</label>
+            <input id="explore-query" form="filters" name="q" type="search" placeholder="Cari tempat atau menu, misalnya nasi goreng dekat ITS">
+            <button form="filters"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg> Cari</button>
+          </div>
+        </div>
+        <div id="explore-categories" class="explore-categories" aria-label="Kategori kuliner"></div>
+        <div class="results-toolbar">
+          <div><p id="result-count" role="status"></p><span class="sample-label">Data ilustratif</span></div>
+          <label>Urutkan:
+            <select name="sort" form="filters">
+              <option value="relevant">Paling Relevan</option>
+              <option value="nearest">Jarak Terdekat</option>
+              <option value="price">Harga Terendah</option>
+              <option value="rating">Rating Tertinggi</option>
+            </select>
+          </label>
+        </div>
+        <div id="results" class="explore-results"></div>
+      </div>
+    </section>
+    <section id="detail" class="page" hidden>
+      <a class="back" href="#jelajahi">← Kembali ke Jelajahi</a>
+      <div id="place-detail"></div>
+    </section>
+    <section id="peta" class="page" hidden>
+      <aside class="map-sidebar">
+        <h1>Peta Kuliner</h1>
+        <p>Lihat persebaran contoh tempat makan di sekitar ITS.</p>
+        <label class="sr-only" for="map-query">Cari nama tempat makan</label>
+        <input id="map-query" type="search" placeholder="Cari nama tempat makan…">
+        <div id="map-categories" class="map-categories" aria-label="Kategori tempat makan"></div>
+        <div class="map-list-heading">
+          <h2 id="map-count">Daftar Tempat Makan</h2>
+          <select id="map-sort" aria-label="Urutkan tempat">
+            <option value="">Paling relevan</option><option value="near">Jarak terdekat</option><option value="rating">Rating tertinggi</option>
+          </select>
+        </div>
+        <div id="map-list"></div>
+      </aside>
+      <div class="map-stage">
+        <div class="map-canvas" id="map-scheme">
+          <svg class="map-drawing" viewBox="0 0 800 600" preserveAspectRatio="none" aria-hidden="true">
+            <defs><pattern id="blocks" width="39" height="30" patternUnits="userSpaceOnUse" patternTransform="rotate(23)">
+              <rect width="39" height="30" fill="#e9e8f2"/><path d="M0 0H39V30" stroke="#fff" stroke-width="2" fill="none"/>
+              <path d="M9 6h10v8H9z M23 17h10v7H23z" fill="#dce0ed"/>
+            </pattern></defs>
+            <rect width="800" height="600" fill="url(#blocks)"/>
+            <path d="m200 100 430 50 44 286-320 94-228-150z" fill="#d1eadb" stroke="#a699ef" stroke-width="3" stroke-dasharray="8 6"/>
+            <path d="M0 290 800 409 M65 0l-15 110 195 490M709 0 520 600 M0 535 800 259 M312 0l60 600" stroke="#fff" stroke-width="10" fill="none"/>
+            <path d="M0 535 800 259" stroke="#f8dfa7" stroke-width="4" fill="none"/>
+            <path d="M150 0 800 215 M0 420 680 600 M0 128l800 445" stroke="#fff" stroke-width="3" fill="none"/>
+            <g fill="#4a5581" font-size="17" font-family="system-ui"><text x="325" y="306">Kawasan Kampus ITS</text><text x="645" y="202">Keputih</text><text x="655" y="490">Sukolilo</text></g>
+          </svg>
+          <div id="markers"></div>
+        </div>
+        <div id="live-map" class="map-canvas" aria-label="Peta dasar OpenStreetMap" hidden></div>
+        <div class="map-topbar">
+          <div><span class="pill">Sekitar ITS</span> <span class="pill">Lokasi dummy</span></div>
+          <button type="button" id="enable-map" class="secondary" hidden>Aktifkan peta OSM</button>
+        </div>
+        <p id="map-status" role="status">Skema peta lokal</p>
+        <div id="map-selection" aria-live="polite"></div>
+        <div class="map-legend"><strong>Kategori tempat makan</strong><div id="legend-items"></div></div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
