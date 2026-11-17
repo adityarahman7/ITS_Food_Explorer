@@ -40,7 +40,7 @@
         campusArea: !text(row.area) ? '' : normalize(row.area).startsWith('dalam kampus') ? 'Dalam Kampus' : 'Luar Kampus',
         position, distance: distance(raw.campusCenter, position), menu,
         facilities: text(row.fasilitas).split(/[,;\n]/).map(text).filter(Boolean), hours: text(row.jam_operasional),
-        status: text(row.status), verifiedAt: text(row.terakhir_verifikasi), source: text(row.sumber_data), mapsUrl: text(row.google_maps_url),
+        status: text(row.status), verifiedAt: text(row.terakhir_verifikasi), source: text(row.sumber_data), mapsUrl: text(row.google_maps_url), osmUrl: text(row.osm_url),
         photoUrl: localPhoto(row.foto_url), photoCredit: text(row.foto_kredit),
         tags: [...new Set(menu.map(item => item.category))], rating: number(row.rating), reviews: number(row.jumlah_rating) };
     });

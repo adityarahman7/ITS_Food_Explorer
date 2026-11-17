@@ -2,7 +2,7 @@
   'use strict';
   const categories = ['', 'Makanan berat', 'Minuman', 'Camilan', 'Bakso & mie', 'Kopi', 'Dessert', 'Lainnya'];
   const campusAreas = ['Dalam Kampus', 'Luar Kampus'];
-  const areas = ['Gebang Lor', 'Gebang Putih', 'Keputih', 'Mulyosari'];
+  const areas = ['Gebang Lor', 'Gebang Putih', 'Keputih', 'Mulyosari', 'Mulyorejo', 'Rungkut', 'Sukolilo'];
   const facilities = ['Wi-Fi', 'Tempat Duduk', 'Parkir Motor', 'AC / Indoor', 'Outdoor'];
   const sorts = ['relevant', 'nearest', 'price', 'rating'];
   const properties = {
