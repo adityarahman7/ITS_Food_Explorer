@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ITS Food Exploler</title>
   <link rel="stylesheet" href="style.css">
+  <script src="catalog.js" defer></script>
+  <script src="ai-contract.js" defer></script>
+  <script src="ai-config.js" defer></script>
+  <script src="map-chat.js" defer></script>
   <script src="app.js" defer></script>
 </head>
 <body>
@@ -19,9 +23,10 @@
         <button class="header-account" type="button" disabled title="Fitur belum tersedia">Masuk</button>
         <button class="header-account primary" type="button" disabled title="Fitur belum tersedia">Daftar</button>
       </div>
-      <div id="about-home" popover><strong>ITS Food Exploler</strong><p>Pratinjau pencarian kuliner di sekitar ITS dengan data ilustratif.</p></div>
+      <div id="about-home" popover><strong>ITS Food Exploler</strong><p>Katalog outlet sekitar ITS. Pencarian AI membantu memahami kebutuhanmu; menu dan harga yang tersedia masih ilustratif.</p></div>
     </div>
   </header>
+  <div id="catalog-status" class="catalog-notice" role="status">Memuat katalog outlet…</div>
   <main class="wrap">
     <section id="beranda" class="page">
       <div class="home-hero">
@@ -35,7 +40,7 @@
           <form id="home-search" class="home-search">
             <label class="sr-only" for="home-query">Cari tempat atau menu</label>
             <span class="search-symbol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg></span>
-            <input id="home-query" name="q" type="search" placeholder="Mau makan apa hari ini? (contoh: nasi goreng)">
+            <input id="home-query" name="q" type="search" maxlength="300" placeholder="Mau makan apa? Contoh: ayam di luar kampus maksimal 15 ribu">
             <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg> Cari</button>
           </form>
           <div id="categories" class="home-categories" aria-label="Jelajahi kategori"></div>
@@ -43,7 +48,7 @@
       </div>
       <div class="home-wrap recommendations">
         <div class="recommendations-heading">
-          <div><h2>Rekomendasi Untuk Kamu</h2><p>Jelajahi pilihan tempat makan di sekitar kampus. <span>Data ilustratif</span></p></div>
+          <div><h2>Jelajahi Katalog Awal</h2><p>Pilihan outlet dari pendataan awal. <span>Menu dan harga ilustratif</span></p></div>
           <a href="#jelajahi" id="home-all">Lihat Semua <span aria-hidden="true">→</span></a>
         </div>
         <div id="recommendations" class="cards"></div>
@@ -51,10 +56,11 @@
     </section>
     <section id="jelajahi" class="page" hidden>
       <form id="filters" class="explore-sidebar" aria-label="Filter pencarian">
-        <div class="filter-heading"><h2>Filter Pencarian</h2><button type="reset" class="filter-reset">↻ Reset</button></div>
+        <div class="filter-heading"><h2>Filter Pencarian</h2><button type="reset" class="filter-reset">↻ Reset</button><button type="button" id="close-explore-filters" class="secondary" aria-label="Tutup filter">×</button></div>
         <input name="category" type="hidden">
         <div id="filter-groups"></div>
       </form>
+      <button type="button" id="explore-filter-backdrop" aria-label="Tutup filter pencarian" tabindex="-1"></button>
       <div class="explore-content">
         <div class="explore-hero">
           <svg class="explore-campus" viewBox="1080 69 576 112" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
@@ -65,13 +71,16 @@
           <div class="explore-search">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>
             <label class="sr-only" for="explore-query">Cari tempat atau menu</label>
-            <input id="explore-query" form="filters" name="q" type="search" placeholder="Cari tempat atau menu, misalnya nasi goreng dekat ITS">
+            <input id="explore-query" form="filters" name="q" type="search" maxlength="300" placeholder="Contoh: ayam di luar kampus maksimal 15 ribu">
             <button form="filters"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg> Cari</button>
           </div>
         </div>
+        <div class="ai-search-options"><label><input id="use-ai" type="checkbox" checked> Bantu pencarian dengan AI</label><button id="search-without-ai" class="secondary" type="button" hidden>Cari biasa</button></div>
+        <p id="ai-search-status" class="ai-search-status" role="status" aria-live="polite" hidden></p>
         <div id="explore-categories" class="explore-categories" aria-label="Kategori kuliner"></div>
         <div class="results-toolbar">
-          <div><p id="result-count" role="status"></p><span class="sample-label">Data ilustratif</span></div>
+          <button type="button" id="toggle-explore-filters" class="secondary" aria-expanded="false" aria-controls="filters">☷ Filter</button>
+          <div><p id="result-count" role="status"></p><span class="sample-label">Katalog outlet dan lokasi · menu tersedia pada sebagian outlet</span></div>
           <label>Urutkan:
             <select name="sort" form="filters">
               <option value="relevant">Paling Relevan</option>
@@ -82,6 +91,7 @@
           </label>
         </div>
         <div id="results" class="explore-results"></div>
+        <nav id="explore-pagination" class="explore-pagination" aria-label="Halaman hasil pencarian" hidden></nav>
       </div>
     </section>
     <section id="detail" class="page" hidden>
@@ -89,14 +99,13 @@
       <div id="place-detail"></div>
     </section>
     <section id="peta" class="page" hidden>
-      <aside class="map-sidebar">
-        <h1>Peta Kuliner</h1>
-        <p>Lihat persebaran contoh tempat makan di sekitar ITS.</p>
-        <label class="sr-only" for="map-query">Cari nama tempat makan</label>
-        <input id="map-query" type="search" placeholder="Cari nama tempat makan…">
-        <div id="map-categories" class="map-categories" aria-label="Kategori tempat makan"></div>
+      <aside class="map-sidebar" id="map-outlet-panel" aria-labelledby="map-count" hidden>
         <div class="map-list-heading">
           <h2 id="map-count">Daftar Tempat Makan</h2>
+          <button type="button" id="close-map-list" class="secondary" aria-label="Tutup daftar outlet">×</button>
+        </div>
+        <div class="map-list-sort">
+          <label for="map-sort">Urutkan</label>
           <select id="map-sort" aria-label="Urutkan tempat">
             <option value="">Paling relevan</option><option value="near">Jarak terdekat</option><option value="rating">Rating tertinggi</option>
           </select>
@@ -120,13 +129,32 @@
           <div id="markers"></div>
         </div>
         <div id="live-map" class="map-canvas" aria-label="Peta dasar OpenStreetMap" hidden></div>
+        <button type="button" id="toggle-map-chat" class="map-chat-toggle" aria-expanded="false" aria-controls="map-chat-panel">✦ Tanya AI</button>
+        <aside id="map-chat-panel" class="map-chat-panel" aria-labelledby="map-chat-title" hidden>
+          <div class="map-chat-heading"><span class="map-chat-symbol" aria-hidden="true">✦</span><div><h2 id="map-chat-title">Asisten Kuliner ITS</h2><p>Ceritakan kebutuhanmu, jelajahi petanya.</p></div><button type="button" id="close-map-chat" class="secondary" aria-label="Tutup chat">×</button></div>
+          <div id="map-chat-messages" class="map-chat-messages" role="log" aria-live="polite" aria-relevant="additions"></div>
+          <div id="map-chat-progress" class="map-chat-progress" role="status" hidden><span aria-hidden="true">● ● ●</span> Memahami pencarianmu…</div>
+          <div id="map-chat-active" class="map-chat-active" hidden><span id="map-chat-summary"></span><button type="button" id="clear-map-chat" class="secondary">Mulai ulang</button></div>
+          <form id="map-chat-form" class="map-chat-form">
+            <label class="sr-only" for="map-chat-input">Tanya asisten kuliner ITS</label>
+            <input id="map-chat-input" type="text" maxlength="300" placeholder="Misalnya: ayam maksimal 15 ribu" autocomplete="off" required>
+            <button type="submit" id="send-map-chat" aria-label="Kirim pencarian">↑</button>
+          </form>
+          <p class="map-chat-footnote">Hasil dari katalog · harga menu masih ilustratif</p>
+        </aside>
+        <div class="map-tools">
+          <h1>Peta Kuliner <span>Sekitar ITS</span></h1>
+          <label class="sr-only" for="map-query">Cari outlet atau menu pada peta</label>
+          <input id="map-query" type="search" placeholder="Cari outlet atau menu…">
+          <div id="map-categories" class="map-categories" aria-label="Kategori tempat makan"></div>
+        </div>
         <div class="map-topbar">
-          <div><span class="pill">Sekitar ITS</span> <span class="pill">Lokasi dummy</span></div>
+          <button type="button" id="toggle-map-list" aria-expanded="false" aria-controls="map-outlet-panel">☰ Daftar Outlet</button>
           <button type="button" id="enable-map" class="secondary" hidden>Aktifkan peta OSM</button>
         </div>
         <p id="map-status" role="status">Skema peta lokal</p>
-        <div id="map-selection" aria-live="polite"></div>
-        <div class="map-legend"><strong>Kategori tempat makan</strong><div id="legend-items"></div></div>
+        <div id="map-selection" aria-live="polite" hidden></div>
+        <details class="map-legend"><summary>Kategori tempat makan</summary><div id="legend-items"></div></details>
       </div>
     </section>
   </main>
