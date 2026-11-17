@@ -3,7 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ITS Food Exploler</title>
+  <title>ITS Food Explorer</title>
+  <meta name="description" content="Jelajahi kuliner di sekitar ITS lewat katalog outlet, peta, dan pencarian AI.">
+  <meta name="theme-color" content="#6339f5">
+  <link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml" sizes="any">
+  <link rel="icon" href="assets/brand/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="assets/brand/logo-icon.png">
   <link rel="stylesheet" href="style.css">
   <script src="catalog.js" defer></script>
   <script src="ai-contract.js" defer></script>
@@ -14,7 +19,7 @@
 <body>
   <header class="top">
     <div class="wrap bar">
-      <a class="brand" href="#beranda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v5a3 3 0 0 0 6 0V3M6 3v18M17 21V3c-3 2-4 5-4 9h4"/></svg> ITS Food Exploler</a>
+      <a class="brand" href="#beranda" aria-label="ITS Food Explorer — Beranda"><img class="brand-logo" src="assets/brand/logo-navbar.svg" width="232" height="52" alt="ITS Food Explorer" decoding="async" fetchpriority="high"></a>
       <nav aria-label="Navigasi utama">
         <a href="#beranda">Beranda</a><a href="#jelajahi">Jelajahi</a><a href="#peta">Peta</a><button type="button" class="home-about" popovertarget="about-home">Tentang</button>
       </nav>
@@ -23,7 +28,7 @@
         <button class="header-account" type="button" disabled title="Fitur belum tersedia">Masuk</button>
         <button class="header-account primary" type="button" disabled title="Fitur belum tersedia">Daftar</button>
       </div>
-      <div id="about-home" popover><strong>ITS Food Exploler</strong><p>Katalog outlet sekitar ITS. Pencarian AI membantu memahami kebutuhanmu; menu dan harga yang tersedia masih ilustratif.</p></div>
+      <div id="about-home" popover><strong>ITS Food Explorer</strong><p>Katalog outlet sekitar ITS. Pencarian AI membantu memahami kebutuhanmu; menu dan harga yang tersedia masih ilustratif.</p></div>
     </div>
   </header>
   <div id="catalog-status" class="catalog-notice" role="status">Memuat katalog outlet…</div>
